@@ -16,7 +16,10 @@ public class WordCount {
 	public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException{
 
 		if (args.length != 2){
-			System.out.println("usage: [input] [output]");
+			Console.log("usage: [input] [output]");
+			Console.log("Recieved:");
+			Console.log(args);
+			Console.error("Unexpected arguments. See above.");
 			System.exit(-1);
 		}
 
