@@ -9,11 +9,9 @@ import org.apache.hadoop.mapreduce.*;
 public class NGramMapper extends Mapper<Object, Text, Text, IntWritable> {
 
 	private static final IntWritable one = new IntWritable(1);
-	private static final Pattern replace = Pattern.compile("[\\n]+");
-	private static final Pattern remove = Pattern.compile("[^a-zA-Z\\d :-\\$]");
-	private static final Pattern split = Pattern.compile("[\\s\t]+");
+	private static final Pattern replace = Pattern.compile("[^a-zA-Z\\d\\s':-\\$]");
+	private static final Pattern split = Pattern.compile("[\\s\t\\n]+");
 
-	private static final String empty = "";
 	private static final String space = " ";
 	
 	private static Text t = new Text();
@@ -21,8 +19,7 @@ public class NGramMapper extends Mapper<Object, Text, Text, IntWritable> {
 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException{
 
 		String input = value.toString().toLowerCase();
-		input = replace.matcher(input).replaceAll(space);
-		input = remove.matcher(input).replaceAll(empty);//Precompiled regex.
+		input = replace.matcher(input).replaceAll(space);//Precompiled regex.
 		String[] words = split.split(input);
 		
 		//N-Gram(1)

@@ -16,36 +16,45 @@ import org.apache.hadoop.util.ToolRunner;
 
 public class Engine extends Configured implements Tool {
 
-	public static void main(String[] args) throws Exception{
+	public static void main(String[] args){
 
-		Configuration conf = new Configuration();
-		String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
-		System.exit(ToolRunner.run(conf, new Engine(), otherArgs));
+		try {
+			Configuration conf = new Configuration();
+			String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();		
+			int ret = ToolRunner.run(conf, new Engine(), otherArgs);
+			System.exit(ret);
+		} catch (Exception e) {
+			System.out.println("An error occured and was caught!");
+			e.printStackTrace();
+			System.exit(1);
+		}
+
 
 	}
 
 	@Override
 	public int run(String[] args) throws Exception {
-		
+
 		Job job = Job.getInstance(getConf());
-		
+
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
-		
+
 		job.setMapperClass(NGramMapper.class);
 		job.setReducerClass(SumReducer.class);
-		
+
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setOutputFormatClass(TextOutputFormat.class);
-		
+
 		FileInputFormat.setInputPaths(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));
-		
+
 		job.setJarByClass(Engine.class);
-		
-		job.submit();
+
+		job.waitForCompletion(true);
+
 		return 0;
-		
+
 	}
 
 }
