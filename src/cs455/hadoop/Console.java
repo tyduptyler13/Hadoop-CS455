@@ -1,4 +1,4 @@
-package com.myuplay.CS455.Hadoop;
+package cs455.hadoop;
 
 /**
  * A common console simplification class.
