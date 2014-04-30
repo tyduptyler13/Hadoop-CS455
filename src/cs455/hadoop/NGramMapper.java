@@ -9,7 +9,7 @@ import org.apache.hadoop.mapreduce.*;
 public class NGramMapper extends Mapper<Object, Text, Text, IntWritable> {
 
 	private static final IntWritable one = new IntWritable(1);
-	private static final Pattern replace = Pattern.compile("[^a-zA-Z\\d\\s':-\\$]");
+	private static final Pattern replace = Pattern.compile("[^a-zA-Z\\d\\s':\\$\\-]");
 	private static final Pattern split = Pattern.compile("[\\s\t\\n]+");
 
 	private static final String space = " ";
