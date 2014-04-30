@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.*;
-import org.apache.hadoop.mapred.FileSplit;
+import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 
 public class NGramMapper extends Mapper<Object, Text, Text, IntWritable> {
 
