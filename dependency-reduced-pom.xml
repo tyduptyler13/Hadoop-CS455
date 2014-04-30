@@ -4,7 +4,7 @@
   <groupId>com.myuplay.CS455</groupId>
   <artifactId>Hadoop</artifactId>
   <name>Hadoop CS455</name>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.3-SNAPSHOT</version>
   <description>CS455 Hadoop project</description>
   <build>
     <sourceDirectory>src</sourceDirectory>
