@@ -13,15 +13,20 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 public class Engine {
 
 	public static void main(String[] args){
+		
+		if (args.length != 2){
+			Console.log("usage: [input] [output]");
+			Console.log("Recieved:");
+			Console.log(args);
+			Console.error("Unexpected arguments. See above.");
+			System.exit(-1);
+		}
 
 		Console.log("===Starting===");
 
 		try {
 
-			Configuration conf = new Configuration();
-
-
-			Job job = Job.getInstance(conf);
+			Job job = Job.getInstance(new Configuration());
 
 			job.setOutputKeyClass(Text.class);
 			job.setOutputValueClass(IntWritable.class);
