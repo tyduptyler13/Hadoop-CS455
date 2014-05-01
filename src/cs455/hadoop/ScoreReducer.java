@@ -56,7 +56,7 @@ public class ScoreReducer extends Reducer<Text, Text, Text, DoubleWritable>{
 		out.close();
 	}
 
-	private static final char[] vowels = { 'a', 'e', 'i', 'o', 'u', 'y' };
+	private static final char[] vowels = { 'A', 'E', 'I', 'O', 'U', 'Y' };
 
 	private static int countSyllables(String word){
 
@@ -86,10 +86,10 @@ public class ScoreReducer extends Reducer<Text, Text, Text, DoubleWritable>{
 				lastWasVowel = false;
 		}
 		//remove es, it's _usually? silent
-		if (currentWord.length() > 2 && currentWord.substring(currentWord.length() - 2) == "es")
+		if (currentWord.length() > 2 && currentWord.substring(currentWord.length() - 2).equals("ES"))
 			numVowels--;
 		// remove silent e
-		else if (currentWord.length() > 1 && currentWord.substring(currentWord.length() - 1) == "e")
+		else if (currentWord.length() > 1 && currentWord.substring(currentWord.length() - 1).equals("E"))
 			numVowels--;
 
 		return numVowels;
