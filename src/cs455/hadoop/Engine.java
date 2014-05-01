@@ -3,6 +3,7 @@ package cs455.hadoop;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.DoubleWritable;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -48,17 +49,43 @@ public class Engine {
 
 			job.setJarByClass(Engine.class);
 
-			Console.log("===Running NGram===");
+			Console.log("===Running Score===");
 
 			job.waitForCompletion(true);
 
 			if (job.isSuccessful()){
 
-				Console.log("====FINISHED====");
+				Job job2 = Job.getInstance(new Configuration());
+
+				job2.setMapperClass(NGramMapper.class);
+				job2.setReducerClass(NGramReducer.class);
+
+				job2.setMapOutputKeyClass(Text.class);
+				job2.setMapOutputValueClass(IntWritable.class);
+
+				job2.setOutputKeyClass(Text.class);
+				job2.setOutputValueClass(Text.class);
+
+				FileInputFormat.setInputPaths(job2, new Path(args[0]));
+				FileOutputFormat.setOutputPath(job2, new Path(args[1]));
+
+				job2.setJarByClass(Engine.class);
+
+				Console.log("===Running NGram===");
+
+				job2.waitForCompletion(true);
+
+				if (job2.isSuccessful()){
+
+					Console.log("====FINISHED====");
+
+				}
+
+				Console.warn("===NGRAM Failed===");
 
 			} else {
 
-				Console.warn("===NGRAM Failed===");
+				Console.warn("===Score Failed===");
 
 			}
 

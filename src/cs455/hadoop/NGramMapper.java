@@ -16,11 +16,11 @@ import org.apache.hadoop.mapreduce.lib.input.FileSplit;
  * @author Tyler
  *
  */
-public class NGramMapper extends Mapper<Object, Text, Text, Text> {
+public class NGramMapper extends Mapper<Object, Text, Text, IntWritable> {
 
 	private static final Pattern split = Pattern.compile("[^\\w'\\-\\$]+");
 
-	private static Text year;
+	private static IntWritable year;
 
 	private static Text t = new Text();
 
@@ -28,7 +28,16 @@ public class NGramMapper extends Mapper<Object, Text, Text, Text> {
 
 		String filename = ((FileSplit) context.getInputSplit()).getPath().getName();
 
-		year = new Text(filename.split("Year")[1].replace(".txt", ""));
+		String syear = filename.split("Year")[1].replace(".txt", "");
+
+		int iyear;
+		if (syear.endsWith("BC")){
+			iyear = -Integer.parseInt(syear.replace("BC", ""));//Negative year.
+		} else {
+			iyear = Integer.parseInt(syear);
+		}
+
+		year = new IntWritable((int) (Math.ceil(iyear/10)*10));
 
 		String input = value.toString().toUpperCase(Locale.ENGLISH);
 		String[] unfiltered = split.split(input);
