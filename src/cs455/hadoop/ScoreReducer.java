@@ -26,20 +26,26 @@ public class ScoreReducer extends Reducer<Text, Text, Text, DoubleWritable>{
 
 			wordCount++;
 			syllableCount += countSyllables(svalue);
-			if (svalue.contains(".") || svalue.equals("!") || svalue.equals("?")){
+			if (svalue.contains(".") || svalue.contains("!") || svalue.contains("?")){
 				sentenceCount++;
 			}
 
 		}
 
 		//Do calculations.
-		double ease = 206.835 - 1.015 * ((double) wordCount / (double) sentenceCount)
-				- 84.6 * ((double) syllableCount / (double) wordCount);
-		double grade = 0.39 * ((double) wordCount / (double) sentenceCount)
-				+ 11.8 * ((double) syllableCount / (double)  wordCount) - 15.59;
+		double ease = 206.835 - 1.015 * ((double) wordCount / sentenceCount)
+				- 84.6 * ((double) syllableCount / wordCount);
+		double grade = 0.39 * ((double) wordCount / sentenceCount)
+				+ 11.8 * ((double) syllableCount / wordCount) - 15.59;
 
 
 		//Print calculations.
+
+		Console.debug("Word count: " + wordCount);
+		Console.debug("syllableCount: " + syllableCount);
+		Console.debug("Sentence count: " + sentenceCount);
+		Console.debug("Ease: " + ease);
+		Console.debug("Grade: " + grade);
 
 		out.write("Ease", key, new DoubleWritable(ease));
 		out.write("Grade", key, new DoubleWritable(grade));
@@ -60,17 +66,14 @@ public class ScoreReducer extends Reducer<Text, Text, Text, DoubleWritable>{
 		for (int i = 0; i < currentWord.length(); ++i){
 			char wc = currentWord.charAt(i);
 			boolean foundVowel = false;
-			for (char v : vowels)
-			{
+			for (char v : vowels){
 				//don't count diphthongs
-				if (v == wc && lastWasVowel)
-				{
+				if (v == wc && lastWasVowel){
 					foundVowel = true;
 					lastWasVowel = true;
 					break;
 				}
-				else if (v == wc && !lastWasVowel)
-				{
+				else if (v == wc && !lastWasVowel){
 					numVowels++;
 					foundVowel = true;
 					lastWasVowel = true;
