@@ -13,7 +13,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 public class Engine {
 
 	public static void main(String[] args){
-		
+
 		if (args.length != 2){
 			Console.log("usage: [input] [output]");
 			Console.log("Recieved:");
@@ -31,8 +31,8 @@ public class Engine {
 			job.setOutputKeyClass(Text.class);
 			job.setOutputValueClass(IntWritable.class);
 
-			job.setMapperClass(NGramMapper.class);
-			job.setReducerClass(SumReducer.class);
+			job.setMapperClass(WordMapper.class);
+			job.setReducerClass(ScoreReducer.class);
 
 			job.setInputFormatClass(TextInputFormat.class);
 			job.setOutputFormatClass(TextOutputFormat.class);
@@ -42,9 +42,19 @@ public class Engine {
 
 			job.setJarByClass(Engine.class);
 
+			Console.log("===Running NGram===");
+
 			job.waitForCompletion(true);
 
-			Console.log("====FINISHED====");
+			if (job.isSuccessful()){
+
+				Console.log("====FINISHED====");
+
+			} else {
+
+				Console.warn("===NGRAM Failed===");
+
+			}
 
 		} catch (Exception e) {
 

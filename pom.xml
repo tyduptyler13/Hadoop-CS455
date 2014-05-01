@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.myuplay.CS455</groupId>
 	<artifactId>Hadoop</artifactId>
-	<version>0.0.8-SNAPSHOT</version>
+	<version>0.1.8-SNAPSHOT</version>
 	<name>Hadoop CS455</name>
 	<description>CS455 Hadoop project</description>
 	<build>
@@ -16,27 +16,6 @@
 					<source />
 					<target />
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.2</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<transformers>
-								<transformer
-									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>cs455.hadoop.Engine</mainClass>
-								</transformer>
-							</transformers>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>

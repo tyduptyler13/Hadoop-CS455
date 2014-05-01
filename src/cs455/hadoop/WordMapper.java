@@ -1,4 +1,3 @@
-
 package cs455.hadoop;
 
 import java.io.IOException;
@@ -11,24 +10,20 @@ import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.*;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 
-/**
- * More useful for inverse frequency.
- * @author Tyler
- *
- */
-public class NGramMapper extends Mapper<Object, Text, Text, Text> {
+public class WordMapper extends Mapper<Object, Text, Text, Text> {
 
-	private static final Pattern split = Pattern.compile("[^\\w'\\-\\$]+");
-
-	private static Text year;
+	/**
+	 * Keep punctionation to count sentences
+	 * Keep $ signs for seeing currency etc
+	 * Keep - to keep compound words together
+	 */
+	private static final Pattern split = Pattern.compile("[^\\w'\\.!\\?\\-\\$]+");
 
 	private static Text t = new Text();
 
 	public void map(Object key, Text value, Context context) throws IOException, InterruptedException{
 
-		String filename = ((FileSplit) context.getInputSplit()).getPath().getName();
-
-		year = new Text(filename.split("Year")[1].replace(".txt", ""));
+		Text file = new Text(((FileSplit) context.getInputSplit()).getPath().getName());
 
 		String input = value.toString().toUpperCase(Locale.ENGLISH);
 		String[] unfiltered = split.split(input);
@@ -41,26 +36,13 @@ public class NGramMapper extends Mapper<Object, Text, Text, Text> {
 			}
 		}
 
-		//The following could be improved for better memory access.
-
 		//N-Gram(1)
 		for (String word : words){
 			t.set(word);
-			context.write(t, year);
-		}
-
-		//N-Gram(2)
-		for (int i = 0; i < words.size() - 1; ++i){
-			t.set(words.get(i) + " " + words.get(i+1));
-			context.write(t, year);
-		}
-
-		//N-Gram(3)
-		for (int i = 0; i < words.size() - 2; ++i){
-			t.set(words.get(i) + " " + words.get(i+1) + " " + words.get(i+2));
-			context.write(t, year);
+			context.write(file, t);
 		}
 
 	}
 
 }
+
