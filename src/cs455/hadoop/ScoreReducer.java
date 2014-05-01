@@ -24,9 +24,9 @@ public class ScoreReducer extends Reducer<Text, Text, Text, DoubleWritable>{
 
 			String svalue = value.toString();
 
-			if (!svalue.contains(" ")){
-				wordCount++;
-				syllableCount += countSyllables(svalue);
+			wordCount++;
+			syllableCount += countSyllables(svalue);
+			if (svalue.contains(".") || svalue.equals("!") || svalue.equals("?")){
 				sentenceCount++;
 			}
 
