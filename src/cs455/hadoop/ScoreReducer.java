@@ -33,8 +33,10 @@ public class ScoreReducer extends Reducer<Text, Text, Text, DoubleWritable>{
 		}
 
 		//Do calculations.
-		double ease = 206.835 - 1.015 * ((double) wordCount / sentenceCount) - 84.6 * ((double) syllableCount / wordCount);
-		double grade = 0.39 * ((double) wordCount / sentenceCount) + 11.8 * ((double) syllableCount / wordCount) - 15.59;
+		double ease = 206.835 - 1.015 * ((double) wordCount / (double) sentenceCount)
+				- 84.6 * ((double) syllableCount / (double) wordCount);
+		double grade = 0.39 * ((double) wordCount / (double) sentenceCount)
+				+ 11.8 * ((double) syllableCount / (double)  wordCount) - 15.59;
 
 
 		//Print calculations.
