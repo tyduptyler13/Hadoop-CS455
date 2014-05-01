@@ -1,6 +1,7 @@
 package cs455.hadoop;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.*;
@@ -9,6 +10,7 @@ import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 public class ScoreReducer extends Reducer<Text, Text, Text, DoubleWritable>{
 
 	private MultipleOutputs<Text, DoubleWritable> out;
+	private static final Pattern punc = Pattern.compile("[\\W]+");
 
 	public void setup(Context context){
 		out = new MultipleOutputs<Text, DoubleWritable>(context);
@@ -25,7 +27,8 @@ public class ScoreReducer extends Reducer<Text, Text, Text, DoubleWritable>{
 			String svalue = value.toString();
 
 			wordCount++;
-			syllableCount += countSyllables(svalue);
+			syllableCount += countSyllables(punc.matcher(svalue).replaceAll(""));
+
 			if (svalue.contains(".") || svalue.contains("!") || svalue.contains("?")){
 				sentenceCount++;
 			}
@@ -60,11 +63,10 @@ public class ScoreReducer extends Reducer<Text, Text, Text, DoubleWritable>{
 
 	private static int countSyllables(String word){
 
-		String currentWord = word;
 		int numVowels = 0;
 		boolean lastWasVowel = false;
-		for (int i = 0; i < currentWord.length(); ++i){
-			char wc = currentWord.charAt(i);
+		for (int i = 0; i <word.length(); ++i){
+			char wc = word.charAt(i);
 			boolean foundVowel = false;
 			for (char v : vowels){
 				//don't count diphthongs
@@ -86,10 +88,10 @@ public class ScoreReducer extends Reducer<Text, Text, Text, DoubleWritable>{
 				lastWasVowel = false;
 		}
 		//remove es, it's _usually? silent
-		if (currentWord.length() > 2 && currentWord.substring(currentWord.length() - 2).equals("ES"))
+		if (word.length() > 2 && word.substring(word.length() - 2).equals("ES"))
 			numVowels--;
 		// remove silent e
-		else if (currentWord.length() > 1 && currentWord.substring(currentWord.length() - 1).equals("E"))
+		else if (word.length() > 1 && word.substring(word.length() - 1).equals("E"))
 			numVowels--;
 
 		return numVowels;

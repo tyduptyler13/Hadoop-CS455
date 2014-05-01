@@ -1,13 +1,11 @@
 package cs455.hadoop;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-import org.apache.hadoop.io.*;
-import org.apache.hadoop.mapreduce.*;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 
 public class WordMapper extends Mapper<Object, Text, Text, Text> {
@@ -17,7 +15,7 @@ public class WordMapper extends Mapper<Object, Text, Text, Text> {
 	 * Keep $ signs for seeing currency etc
 	 * Keep - to keep compound words together
 	 */
-	private static final Pattern split = Pattern.compile("[^\\w'\\.!\\?\\-\\$]+");
+	private static final Pattern split = Pattern.compile("[^\\w'\\.!\\?]+");
 
 	private static Text t = new Text();
 
@@ -28,18 +26,13 @@ public class WordMapper extends Mapper<Object, Text, Text, Text> {
 		String input = value.toString().toUpperCase(Locale.ENGLISH);
 		String[] unfiltered = split.split(input);
 
-		List<String> words = new ArrayList<String>();
-		//Filter once
+		//All words.
 		for (String word : unfiltered){
-			if (word.length() > 0){
-				words.add(word.trim()); //Ensured to be clean now.
+			String tmp = word.trim();
+			if (tmp.length() > 0){ //Filter weird extras that still get in.
+				t.set(tmp);
+				context.write(file, t);
 			}
-		}
-
-		//N-Gram(1)
-		for (String word : words){
-			t.set(word);
-			context.write(file, t);
 		}
 
 	}
