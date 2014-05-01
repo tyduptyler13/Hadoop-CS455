@@ -10,7 +10,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 public class NGramReducer extends Reducer<Text, IntWritable, Text, Text> {
 
 	//Sorted on year.
-	private static final TreeMap<IntWritable, IntWritable> wordsByDecade = new TreeMap<IntWritable, IntWritable>();
+	private final TreeMap<IntWritable, IntWritable> wordsByDecade = new TreeMap<IntWritable, IntWritable>();
 
 	public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException{
 
@@ -30,8 +30,16 @@ public class NGramReducer extends Reducer<Text, IntWritable, Text, Text> {
 	 * @param year
 	 */
 	private void increment(IntWritable year){
+
 		IntWritable value = wordsByDecade.get(year);
+
+		if (value == null){
+			value = new IntWritable(0);
+			wordsByDecade.put(year, value);
+		}
+
 		value.set(value.get()+1);
+
 	}
 
 }
