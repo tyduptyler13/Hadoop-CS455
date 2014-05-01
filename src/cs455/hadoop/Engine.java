@@ -6,8 +6,8 @@ import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 public class Engine {
@@ -28,17 +28,20 @@ public class Engine {
 
 			Job job = Job.getInstance(new Configuration());
 
-			job.setOutputKeyClass(Text.class);
-			job.setOutputValueClass(DoubleWritable.class);
-
+			//Mapper Reducer
 			job.setMapperClass(WordMapper.class);
 			job.setReducerClass(ScoreReducer.class);
 
+			//Mapper outputs
 			job.setMapOutputKeyClass(Text.class);
 			job.setMapOutputValueClass(Text.class);
 
-			job.setInputFormatClass(TextInputFormat.class);
-			job.setOutputFormatClass(TextOutputFormat.class);
+			//Reducer outputs
+			MultipleOutputs.addNamedOutput(job, "Ease", TextOutputFormat.class,
+					Text.class, DoubleWritable.class);
+			MultipleOutputs.addNamedOutput(job, "Grade", TextOutputFormat.class,
+					Text.class, DoubleWritable.class);
+
 
 			FileInputFormat.setInputPaths(job, new Path(args[0]));
 			FileOutputFormat.setOutputPath(job, new Path(args[1]));
