@@ -1,6 +1,7 @@
 package cs455.hadoop;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.IntWritable;
@@ -10,13 +11,24 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
 
-public class Engine {
+public class Engine extends Configured implements Tool{
 
-	public static void main(String[] args){
+	public static void main(String[] args) throws Exception{
 
-		if (args.length != 2){
-			Console.log("usage: [input] [output]");
+		int res = ToolRunner.run(new Configuration(), new Engine(), args);
+
+		System.exit(res);
+
+	}
+
+	@Override
+	public int run(String[] args) throws Exception {
+
+		if (args.length != 3){
+			Console.log("usage: [input] [score output] [ngram output]");
 			Console.log("Recieved:");
 			Console.log(args);
 			Console.error("Unexpected arguments. See above.");
@@ -27,7 +39,7 @@ public class Engine {
 
 		try {
 
-			Job job = Job.getInstance(new Configuration());
+			Job job = Job.getInstance(getConf());
 
 			//Mapper Reducer
 			job.setMapperClass(WordMapper.class);
@@ -55,7 +67,7 @@ public class Engine {
 
 			if (job.isSuccessful()){
 
-				Job job2 = Job.getInstance(new Configuration());
+				Job job2 = Job.getInstance(getConf());
 
 				job2.setMapperClass(NGramMapper.class);
 				job2.setReducerClass(NGramReducer.class);
@@ -67,7 +79,7 @@ public class Engine {
 				job2.setOutputValueClass(Text.class);
 
 				FileInputFormat.setInputPaths(job2, new Path(args[0]));
-				FileOutputFormat.setOutputPath(job2, new Path(args[1]));
+				FileOutputFormat.setOutputPath(job2, new Path(args[2]));
 
 				job2.setJarByClass(Engine.class);
 
@@ -79,9 +91,13 @@ public class Engine {
 
 					Console.log("====FINISHED====");
 
-				}
+				} else {
 
-				Console.warn("===NGRAM Failed===");
+					Console.warn("===NGRAM Failed===");
+
+					return 2;
+
+				}
 
 			} else {
 
@@ -93,11 +109,11 @@ public class Engine {
 
 			Console.error("An error occured!");
 			e.printStackTrace();
-			System.exit(1);
+			return 1;
 
 		}
 
-
+		return 0;
 	}
 
 }
